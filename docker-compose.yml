@@ -10,8 +10,11 @@ services:
 
   frontend:
     build: ./frontend
+    container_name: currency_frontend
     ports:
       - "4200:4200"
+    depends_on:
+      - backend
 
   db:
     image: postgres:18

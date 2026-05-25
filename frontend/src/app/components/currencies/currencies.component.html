@@ -1,0 +1,25 @@
+<h1>Kursy walut</h1>
+
+<button (click)="fetchFromNBP()">Pobierz z NBP</button>
+<button (click)="loadCurrencies()">Wszystkie waluty</button>
+
+<br><br>
+
+<input [(ngModel)]="date" placeholder="YYYY-MM-DD">
+<button (click)="loadByDate()">Szukaj po dacie</button>
+
+<hr>
+
+<table>
+    <tr>
+        <th>Kod</th>
+        <th>Kurs</th>
+        <th>Data</th>
+    </tr>
+
+    <tr *ngFor="let c of currencies">
+        <td>{{c.code}}</td>
+        <td>{{c.rate}}</td>
+        <td>{{c.date}}</td>
+    </tr>
+</table>
