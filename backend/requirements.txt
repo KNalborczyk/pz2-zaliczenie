@@ -1,7 +1,7 @@
 fastapi
 uvicorn
-requests
 sqlalchemy
 psycopg2-binary
+requests
 pytest
-pytest-bdd
+httpx
