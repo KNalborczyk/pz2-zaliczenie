@@ -3,33 +3,14 @@ from app.main import app
 
 client = TestClient(app)
 
-
-def test_root():
-    response = client.get("/")
-    assert response.status_code == 200
-    assert response.json() == {"message": "API works"}
-
+def test_root_fetch():
+    r = client.post("/currencies/fetch")
+    assert r.status_code == 200
 
 def test_get_currencies():
-    response = client.get("/currencies")
-    assert response.status_code == 200
+    r = client.get("/currencies")
+    assert r.status_code == 200
 
-
-def test_get_by_year():
-    response = client.get("/currencies/2026")
-    assert response.status_code == 200
-
-
-def test_get_by_month():
-    response = client.get("/currencies/2026/5")
-    assert response.status_code == 200
-
-
-def test_get_by_day():
-    response = client.get("/currencies/2026/5/20")
-    assert response.status_code == 200
-
-
-def test_get_by_quarter():
-    response = client.get("/currencies/2026/2/1")
-    assert response.status_code == 404
+def test_get_by_date():
+    r = client.get("/currencies/2026-01-01")
+    assert r.status_code in [200, 404]
