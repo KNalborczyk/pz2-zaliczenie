@@ -30,16 +30,35 @@ def fetch_currencies():
         ))
 
     db.commit()
+    db.close()
+
     return {"message": "saved"}
 
 @app.get("/currencies")
 def get_currencies():
     db = get_db()
-    return db.query(Currency.code).distinct().all()
+
+    result = db.query(Currency.code).distinct().all()
+
+    db.close()
+
+    return [r[0] for r in result]
+
 
 @app.get("/currencies/{date}")
 def get_currencies_by_date(date: str):
     db = get_db()
     parsed_date = datetime.strptime(date, "%Y-%m-%d").date()
 
-    return db.query(Currency).filter(Currency.date == parsed_date).all()
+    result = db.query(Currency).filter(Currency.date == parsed_date).all()
+
+    db.close()
+
+    return [
+        {
+            "code": r.code,
+            "rate": r.rate,
+            "date": r.date
+        }
+        for r in result
+    ]
