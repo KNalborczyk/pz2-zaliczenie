@@ -1,0 +1,7 @@
+{
+  "name": "currency-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "echo frontend works"
+  }
+}
