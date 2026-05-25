@@ -1,25 +1,79 @@
 <h1>Kursy walut</h1>
 
-<button (click)="fetchFromNBP()">Pobierz z NBP</button>
-<button (click)="loadCurrencies()">Wszystkie waluty</button>
+<section>
+    <button type="button" (click)="fetchFromNBP()">Pobierz z NBP</button>
+    <button type="button" (click)="loadCurrencies()">Wszystkie waluty</button>
+</section>
 
-<br><br>
+<section style="margin-top: 16px;">
+    <label for="date-input">Szukaj po dacie:</label>
+    <input id="date-input" [(ngModel)]="date" placeholder="YYYY-MM-DD" />
+    <button type="button" (click)="loadByDate()">Szukaj</button>
+</section>
 
-<input [(ngModel)]="date" placeholder="YYYY-MM-DD">
-<button (click)="loadByDate()">Szukaj po dacie</button>
+<hr />
 
-<hr>
+<section>
+    <div>
+        <button type="button" [class.active]="filterType === 'year'" (click)="setFilter('year')">Rok</button>
+        <button type="button" [class.active]="filterType === 'quarter'" (click)="setFilter('quarter')">Kwartał</button>
+        <button type="button" [class.active]="filterType === 'month'" (click)="setFilter('month')">Miesiąc</button>
+        <button type="button" [class.active]="filterType === 'day'" (click)="setFilter('day')">Dzień</button>
+        <button type="button" (click)="resetFilter()">Pokaż wszystkie</button>
+    </div>
+
+    <div style="margin-top: 12px;" *ngIf="filterType === 'year'">
+        <label>Wybierz rok:</label>
+        <select [(ngModel)]="selectedYear" (change)="applyFilter()">
+            <option value="">Wszystkie lata</option>
+            <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+        </select>
+    </div>
+
+    <div style="margin-top: 12px;" *ngIf="filterType === 'quarter'">
+        <label>Wybierz kwartał:</label>
+        <select [(ngModel)]="selectedQuarter" (change)="applyFilter()">
+            <option value="">Wszystkie kwartały</option>
+            <option *ngFor="let quarter of quarters" [value]="quarter">{{ quarter }}</option>
+        </select>
+    </div>
+
+    <div style="margin-top: 12px;" *ngIf="filterType === 'month'">
+        <label>Wybierz miesiąc:</label>
+        <select [(ngModel)]="selectedMonth" (change)="applyFilter()">
+            <option value="">Wszystkie miesiące</option>
+            <option *ngFor="let month of months" [value]="month.value">{{ month.label }}</option>
+        </select>
+    </div>
+
+    <div style="margin-top: 12px;" *ngIf="filterType === 'day'">
+        <label>Wybierz dzień:</label>
+        <input type="date" [(ngModel)]="selectedDay" (change)="applyFilter()" />
+    </div>
+</section>
+
+<section *ngIf="error" style="color: red; margin-top: 12px;">{{ error }}</section>
+<section *ngIf="loading" style="margin-top: 12px;">Ładowanie...</section>
+
+<hr />
 
 <table>
-    <tr>
-        <th>Kod</th>
-        <th>Kurs</th>
-        <th>Data</th>
-    </tr>
-
-    <tr *ngFor="let c of currencies">
-        <td>{{c.code}}</td>
-        <td>{{c.rate}}</td>
-        <td>{{c.date}}</td>
-    </tr>
+    <thead>
+        <tr>
+            <th>Kod</th>
+            <th>Kurs</th>
+            <th>Data</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let c of filteredCurrencies">
+            <td>{{ c.code }}</td>
+            <td>{{ c.rate }}</td>
+            <td>{{ c.date }}</td>
+        </tr>
+    </tbody>
 </table>
+
+<section *ngIf="!filteredCurrencies.length && !loading" style="margin-top: 12px;">
+    Brak kursów do wyświetlenia.
+</section>

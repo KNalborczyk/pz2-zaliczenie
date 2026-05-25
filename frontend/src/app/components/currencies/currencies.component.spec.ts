@@ -1,36 +1,61 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrenciesComponent } from './currencies.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 describe('CurrenciesComponent', () => {
 
     let component: CurrenciesComponent;
     let fixture: ComponentFixture<CurrenciesComponent>;
+    let httpMock: HttpTestingController;
 
     beforeEach(async () => {
 
         await TestBed.configureTestingModule({
-            declarations: [CurrenciesComponent],
-            imports: [HttpClientTestingModule]
+            imports: [CurrenciesComponent, HttpClientTestingModule]
         }).compileComponents();
 
         fixture = TestBed.createComponent(CurrenciesComponent);
         component = fixture.componentInstance;
+        httpMock = TestBed.inject(HttpTestingController);
         fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        httpMock.verify();
     });
 
     it('should create component', () => {
         expect(component).toBeTruthy();
     });
 
-    it('given empty data when loadCurrencies then array exists', () => {
+    it('should fetch currencies when loadCurrencies is called', () => {
         component.loadCurrencies();
-        expect(component.currencies).toBeDefined();
+
+        const request = httpMock.expectOne('http://localhost:8000/currencies');
+        expect(request.request.method).toBe('GET');
+
+        request.flush([
+            { code: 'USD', rate: 4.5, date: '2025-01-01' },
+            { code: 'EUR', rate: 4.7, date: '2025-01-02' }
+        ]);
+
+        expect(component.currencies.length).toBe(2);
+        expect(component.filteredCurrencies.length).toBe(2);
+        expect(component.years).toEqual(['2025']);
     });
 
-    it('given date when loadByDate then function runs', () => {
-        component.date = '2026-01-01';
-        component.loadByDate();
-        expect(component.date).toBe('2026-01-01');
+    it('should render currency rows in the table', () => {
+        component.filteredCurrencies = [
+            { code: 'USD', rate: 4.5, date: '2025-01-01' },
+            { code: 'EUR', rate: 4.7, date: '2025-01-02' }
+        ];
+
+        fixture.detectChanges();
+
+        const rows = fixture.nativeElement.querySelectorAll('tbody tr');
+        expect(rows.length).toBe(2);
+        expect(rows[0].textContent).toContain('USD');
+        expect(rows[0].textContent).toContain('4.5');
+        expect(rows[1].textContent).toContain('EUR');
     });
 });

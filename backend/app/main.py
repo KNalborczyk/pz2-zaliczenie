@@ -47,11 +47,18 @@ def fetch_currencies():
 def get_currencies():
     db = get_db()
 
-    result = db.query(Currency.code).distinct().all()
+    result = db.query(Currency).all()
 
     db.close()
 
-    return [r[0] for r in result]
+    return [
+        {
+            "code": r.code,
+            "rate": r.rate,
+            "date": r.date
+        }
+        for r in result
+    ]
 
 
 @app.get("/currencies/{date}")
