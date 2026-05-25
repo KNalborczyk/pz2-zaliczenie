@@ -3,14 +3,34 @@ from app.main import app
 
 client = TestClient(app)
 
-def test_root_fetch():
-    r = client.post("/currencies/fetch")
-    assert r.status_code == 200
+def test_given_api_when_fetch_currencies_then_saves_data():
+    # GIVEN
+    url = "/currencies/fetch"
 
-def test_get_currencies():
-    r = client.get("/currencies")
-    assert r.status_code == 200
+    # WHEN
+    response = client.post(url)
 
-def test_get_by_date():
-    r = client.get("/currencies/2026-01-01")
-    assert r.status_code in [200, 404]
+    # THEN
+    assert response.status_code == 200
+    assert response.json()["message"] == "saved"
+
+def test_given_api_when_get_currencies_then_returns_list():
+    # GIVEN
+    url = "/currencies"
+
+    # WHEN
+    response = client.get(url)
+
+    # THEN
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+def test_given_api_when_get_by_date_then_returns_data():
+    # GIVEN
+    url = "/currencies/2026-01-01"
+
+    # WHEN
+    response = client.get(url)
+
+    # THEN
+    assert response.status_code in [200, 404]
