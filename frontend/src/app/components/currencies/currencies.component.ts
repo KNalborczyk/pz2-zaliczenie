@@ -38,6 +38,7 @@ export class CurrenciesComponent {
         { value: '11', label: 'Listopad' },
         { value: '12', label: 'Grudzień' }
     ];
+    days = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0'));
     loading = false;
     error = '';
 
@@ -62,8 +63,9 @@ export class CurrenciesComponent {
         });
     }
 
-    loadByDate() {
-        if (!this.date) {
+    loadByDate(dateParam?: string) {
+        const dateToUse = dateParam ?? this.date;
+        if (!dateToUse) {
             this.error = 'Podaj datę w formacie YYYY-MM-DD.';
             return;
         }
@@ -71,7 +73,7 @@ export class CurrenciesComponent {
         this.loading = true;
         this.error = '';
 
-        this.service.getByDate(this.date).subscribe({
+        this.service.getByDate(dateToUse).subscribe({
             next: (data: any) => {
                 this.currencies = data;
                 this.filteredCurrencies = [...data];
@@ -97,6 +99,14 @@ export class CurrenciesComponent {
                 this.loading = false;
             }
         });
+    }
+
+    onClickLoadCurrencies() {
+        requestAnimationFrame(() => this.loadCurrencies());
+    }
+
+    onClickFetchFromNBP() {
+        requestAnimationFrame(() => this.fetchFromNBP());
     }
 
     setFilter(filter: FilterType) {
@@ -130,7 +140,7 @@ export class CurrenciesComponent {
                 break;
             case 'day':
                 this.filteredCurrencies = this.selectedDay
-                    ? records.filter(c => c.date === this.selectedDay)
+                    ? records.filter(c => this.getDay(c.date) === this.selectedDay)
                     : records;
                 break;
         }
@@ -158,5 +168,10 @@ export class CurrenciesComponent {
 
     getMonth(dateValue: string) {
         return dateValue.substring(5, 7);
+    }
+
+    getDay(dateValue: string) {
+        // expects ISO date string like YYYY-MM-DD
+        return dateValue.substring(8, 10);
     }
 }

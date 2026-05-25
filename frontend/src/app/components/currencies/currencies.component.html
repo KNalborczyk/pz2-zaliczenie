@@ -1,14 +1,14 @@
 <h1>Kursy walut</h1>
 
-<section>
-    <button type="button" (click)="fetchFromNBP()">Pobierz z NBP</button>
-    <button type="button" (click)="loadCurrencies()">Wszystkie waluty</button>
-</section>
+    <section>
+    <button type="button" (click)="onClickFetchFromNBP()">Pobierz z NBP</button>
+    <button type="button" (click)="onClickLoadCurrencies()">Wszystkie waluty</button>
+    </section>
 
 <section style="margin-top: 16px;">
     <label for="date-input">Szukaj po dacie:</label>
-    <input id="date-input" [(ngModel)]="date" placeholder="YYYY-MM-DD" />
-    <button type="button" (click)="loadByDate()">Szukaj</button>
+    <input id="date-input" #dateInput [(ngModel)]="date" placeholder="YYYY-MM-DD" />
+    <button type="button" (click)="loadByDate(dateInput.value)">Szukaj</button>
 </section>
 
 <hr />
@@ -48,12 +48,14 @@
 
     <div style="margin-top: 12px;" *ngIf="filterType === 'day'">
         <label>Wybierz dzień:</label>
-        <input type="date" [(ngModel)]="selectedDay" (change)="applyFilter()" />
+        <select [(ngModel)]="selectedDay" (change)="applyFilter()">
+            <option value="">Wszystkie dni</option>
+            <option *ngFor="let d of days; let i = index" [value]="d">{{ i + 1 }}</option>
+        </select>
     </div>
 </section>
 
 <section *ngIf="error" style="color: red; margin-top: 12px;">{{ error }}</section>
-<section *ngIf="loading" style="margin-top: 12px;">Ładowanie...</section>
 
 <hr />
 
