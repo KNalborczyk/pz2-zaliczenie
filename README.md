@@ -43,6 +43,18 @@ Uruchomienie projektu:
 docker compose up --build
 ```
 
+Uruchomienie testów backendu:
+
+```bash
+docker compose exec backend pytest
+```
+
+Uruchomienie testów frontendu:
+
+```bash
+docker compose run --rm frontend npm test
+```
+
 # Adresy
 
 Frontend:
