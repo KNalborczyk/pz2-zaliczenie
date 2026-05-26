@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CurrencyService } from '../../services/currency.service';
@@ -42,7 +42,7 @@ export class CurrenciesComponent {
     loading = false;
     error = '';
 
-    constructor(private service: CurrencyService) { }
+    constructor(private service: CurrencyService, private cdr: ChangeDetectorRef) { }
 
     loadCurrencies() {
         this.loading = true;
@@ -55,10 +55,12 @@ export class CurrenciesComponent {
                 this.updateYears();
                 this.applyFilter();
                 this.loading = false;
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.error = 'Nie można pobrać danych.';
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
     }
@@ -80,10 +82,12 @@ export class CurrenciesComponent {
                 this.updateYears();
                 this.applyFilter();
                 this.loading = false;
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.error = 'Nie można pobrać danych dla wybranej daty.';
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
     }
@@ -93,7 +97,10 @@ export class CurrenciesComponent {
         this.error = '';
 
         this.service.fetchData().subscribe({
-            next: () => this.loadCurrencies(),
+            next: () => {
+                this.resetFilter();
+                this.loadCurrencies();
+            },
             error: () => {
                 this.error = 'Błąd podczas pobierania kursów z NBP.';
                 this.loading = false;
@@ -102,11 +109,13 @@ export class CurrenciesComponent {
     }
 
     onClickLoadCurrencies() {
-        requestAnimationFrame(() => this.loadCurrencies());
+        this.resetFilter();
+        this.loadCurrencies();
     }
 
     onClickFetchFromNBP() {
-        requestAnimationFrame(() => this.fetchFromNBP());
+        this.resetFilter();
+        this.fetchFromNBP();
     }
 
     setFilter(filter: FilterType) {

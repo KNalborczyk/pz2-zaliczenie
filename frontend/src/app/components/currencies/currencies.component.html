@@ -1,15 +1,16 @@
 <h1>Kursy walut</h1>
 
     <section>
-    <button type="button" (click)="onClickFetchFromNBP()">Pobierz z NBP</button>
-    <button type="button" (click)="onClickLoadCurrencies()">Wszystkie waluty</button>
-    </section>
+    <button type="button" (click)="onClickFetchFromNBP()" [disabled]="loading">Pobierz z NBP</button>
+    <button type="button" (click)="onClickLoadCurrencies()" [disabled]="loading">Wszystkie waluty</button>
+</section>
 
 <section style="margin-top: 16px;">
     <label for="date-input">Szukaj po dacie:</label>
-    <input id="date-input" #dateInput [(ngModel)]="date" placeholder="YYYY-MM-DD" />
-    <button type="button" (click)="loadByDate(dateInput.value)">Szukaj</button>
+    <input id="date-input" #dateInput [(ngModel)]="date" placeholder="YYYY-MM-DD" [disabled]="loading" />
+    <button type="button" (click)="loadByDate(dateInput.value)" [disabled]="loading">Szukaj</button>
 </section>
+<section *ngIf="loading" style="margin-top: 12px;">Ładowanie danych...</section>
 
 <hr />
 
