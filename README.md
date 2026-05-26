@@ -69,7 +69,7 @@ http://localhost:8000
 
 # Cel projektu
 
-- Nauka pracy z Angular i FastAPI/DRF
+- Nauka pracy z Angular i FastAPI
 - Integracja z API NBP
 - Testowanie aplikacji
 - Konteneryzacja aplikacji przy użyciu Dockera
